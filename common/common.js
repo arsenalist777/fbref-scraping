@@ -1,8 +1,6 @@
 const cheerio = require('cheerio');
 module.exports = class Common {
 
-
-
     /**
      * convert number to alphabet(A~Z, AA~ZZ, ...)
      * @param {*} number 
@@ -52,6 +50,31 @@ module.exports = class Common {
     };
 
     /**
+     * scrape data from table using class attr
+     * @param {*} $ 
+     * @param {*} dataTable 
+     * @param {*} tableClass 
+     * @param {*} tableWrapperClass 
+     * @param {*} tableTitle 
+     */
+    static scrapeDataFromTableByClass($, dataTable, tableClass, tableWrapperClass, tableTitle) {
+
+        // scraping argorithm for opta
+        const $h3s = $('h3');
+        let $h3 = null;
+        $h3s.each((i, h3) => {
+            if ($(h3).text().includes(tableTitle)) {
+                $h3 = $(h3);
+                return false;
+            }
+        });
+        if ($h3) {
+            const $table = $h3.parent().nextAll(`.${tableWrapperClass}`).eq(0).find(`.${tableClass}`).eq(0);
+            this.scrapeDataFromTable($, $table, dataTable);
+        }
+    };
+
+    /**
      * calculate range for spread sheet
      * @param {*} rowNum 
      * @param {*} colNum 
@@ -59,5 +82,9 @@ module.exports = class Common {
      */
     static createRange(rowNum, colNum) {
         return '!A1:' + this.numberToAlphabet(colNum) + rowNum;
+    }
+
+    static sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
