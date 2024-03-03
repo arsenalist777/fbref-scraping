@@ -5,14 +5,14 @@ const Common = require('../common/common.js');
 const Const = require('../common/const.js');
 
 /**
- * @class PlStatisticsLoader
+ * @class OptStatisticsLoader
  */
-module.exports = class PlStatisticsLoader extends Loader {
+module.exports = class OptStatisticsLoader extends Loader {
 
     /**
-     * fbref url for premier league stats
+     * opta url for premier league stats
      */
-    static FBREF_URL = 'https://fbref.com/en/comps/9/%s/%s-Premier-League-Stats';
+    static OPTA_URL = 'https://theanalyst.com/eu/2023/08/premier-league-stats-%s/';
 
     /**
      * spread sheet id
@@ -39,7 +39,7 @@ module.exports = class PlStatisticsLoader extends Loader {
      * @override
      */
     init() {
-        super.downloadUrl = util.format(PlStatisticsLoader.FBREF_URL, this.season, this.season);
+        super.downloadUrl = util.format(OptStatisticsLoader.OPTA_URL, this.sheetSeason);
     };
 
     /**
@@ -48,9 +48,9 @@ module.exports = class PlStatisticsLoader extends Loader {
      * @override
      */
     async download() {
-        const html = await super.getPageHTML();
+        const html = await super.getAsyncLoadedPageAndIframeHTML('networkidle0', '#iFrameResizer0', 'domcontentloaded', '.stat, .team-sequence-pressure-goal, .ending');
         this.$ = cheerio.load(html);
-    };
+    }
 
     /**
      * @method process
@@ -60,12 +60,15 @@ module.exports = class PlStatisticsLoader extends Loader {
     process() {
         const $ = this.$;
 
-        // create table data set from fbref html
-        Object.keys(Const.CONST.PL_STATISTICS).forEach(key => {
-            let tableId = Const.CONST.PL_STATISTICS[key].TABLE_ID;
-            let $table = $(`#${tableId}`);
+        // create table data set from opta html
+        Object.keys(Const.CONST.OPTA_STATISTICS).forEach(key => {
+            const tableClass = Const.CONST.OPTA_STATISTICS[key].TABLE_CLASS;
+            const tableWrapperClass = Const.CONST.OPTA_STATISTICS[key].TABLE_WRAPPER_CLASS;
+            const tableTitle = Const.CONST.OPTA_STATISTICS[key].SHEET_NAME;
             this.tableDataSet[key] = [];
-            Common.scrapeDataFromTable($, $table, this.tableDataSet[key]);
+
+            // create table data set
+            Common.scrapeDataFromTableByClass($, this.tableDataSet[key], tableClass, tableWrapperClass, tableTitle);
         });
     };
 
@@ -76,14 +79,14 @@ module.exports = class PlStatisticsLoader extends Loader {
      */
     async upload() {
 
-        // upload table data to google spread sheet
+        // upload to google spread sheet
         const response = await Promise.all(Object.keys(this.tableDataSet).map(async (key) => {
 
             // calculate spreadsheet range
             const range = Common.createRange(this.tableDataSet[key].length, this.tableDataSet[key][0].length);
 
-            // update sheet
-            await Loader.updateSheet(PlStatisticsLoader.SPREAD_SHEET_ID, this.sheetSeason, Const.CONST.PL_STATISTICS[key].SHEET_NAME, range, this.tableDataSet[key], (response) => {
+            //update sheet
+            await Loader.updateSheet(OptStatisticsLoader.SPREAD_SHEET_ID, this.sheetSeason, Const.CONST.OPTA_STATISTICS[key].SHEET_NAME, range, this.tableDataSet[key], (response) => {
                 console.log(response);
             });
         }));

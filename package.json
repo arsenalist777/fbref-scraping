@@ -13,6 +13,7 @@
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "encoding-japanese": "^2.0.0",
-    "googleapis": "^105.0.0"
+    "googleapis": "^105.0.0",
+    "puppeteer": "^22.3.0"
   }
 }

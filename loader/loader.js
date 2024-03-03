@@ -1,6 +1,7 @@
 const axios = require('axios');
-const Common = require('../common/common.js');
 const execSync = require('child_process').execSync;
+const puppeteer = require('puppeteer');
+const Common = require('../common/common.js');
 
 /**
  * @class Loader
@@ -74,6 +75,27 @@ module.exports = class Loader {
         } catch (error) {
             console.error('Error while fetching page:', error);
             throw error;
+        }
+    };
+
+    /**
+     * get async loaded page html by puppeteer
+     */
+    async getAsyncLoadedPageAndIframeHTML(asyncWaitEvent, iframeWaitSelector, sycWaitEvent, syncWaitSelector) {
+        const browser = await puppeteer.launch();
+        try {
+            const page = await browser.newPage();
+            await page.goto(this.downloadUrl, { waitUntil: asyncWaitEvent });
+            await page.waitForSelector(iframeWaitSelector);
+            let iframeSrc = await page.$eval(iframeWaitSelector, el => el.src);
+
+            // get iframe src
+            const iframePage = await browser.newPage();
+            await iframePage.goto(iframeSrc, { waitUntil: sycWaitEvent });
+            await iframePage.waitForSelector(syncWaitSelector);
+            return await iframePage.content();
+        } finally {
+            await browser.close();
         }
     };
 

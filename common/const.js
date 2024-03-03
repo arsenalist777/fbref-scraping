@@ -26,7 +26,34 @@ module.exports = class Const {
         ARSENAL_GOAL_LOGS: {
             SHEET_NAME: 'Goal Logs',
             TABLE_ID: 'goallogs_for'
-        }
+        },
 
+        // OPTA_STATISTICS_LOADER
+        OPTA_STATISTICS: {
+            EXPECTED_GOALS_FOR: {
+                SHEET_NAME: 'Expected Goals For',
+                TABLE_ID: '',
+                TABLE_CLASS: 'data-table',
+                TABLE_WRAPPER_CLASS: 'table-wrapper'
+            },
+            EXPECTED_GOALS_AGAINST: {
+                SHEET_NAME: 'Expected Goals Against',
+                TABLE_ID: '',
+                TABLE_CLASS: 'data-table',
+                TABLE_WRAPPER_CLASS: 'table-wrapper'
+            },
+            TEAM_SEQUENCE_STYLES: {
+                SHEET_NAME: 'Team Sequence Styles',
+                TABLE_ID: '',
+                TABLE_CLASS: 'data-table',
+                TABLE_WRAPPER_CLASS: 'table-wrapper'
+            },
+            TEAM_SEQUENCE_PRESSURES: {
+                SHEET_NAME: 'Team Sequence Pressures',
+                TABLE_ID: '',
+                TABLE_CLASS: 'data-table',
+                TABLE_WRAPPER_CLASS: 'table-wrapper'
+            },
+        }
     };
 }
