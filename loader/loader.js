@@ -80,6 +80,11 @@ module.exports = class Loader {
 
     /**
      * get async loaded page html by puppeteer
+     * @param {*} asyncWaitEvent 
+     * @param {*} iframeWaitSelector 
+     * @param {*} sycWaitEvent 
+     * @param {*} syncWaitSelector 
+     * @returns html
      */
     async getAsyncLoadedPageAndIframeHTML(asyncWaitEvent, iframeWaitSelector, sycWaitEvent, syncWaitSelector) {
         const browser = await puppeteer.launch();
