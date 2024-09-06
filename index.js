@@ -14,8 +14,9 @@ async function main() {
     let arsenalGoalLogLoader = new ArsenalGoalLogLoader(process.argv[2]);
     arsenalGoalLogLoader.execute();
 
-    let optaStatisticsLoader = new OptaStatisticsLoader(process.argv[2]);
-    optaStatisticsLoader.execute();
+    // Opta doesn't have the same data before 2023-24
+    // let optaStatisticsLoader = new OptaStatisticsLoader(process.argv[2]);
+    // optaStatisticsLoader.execute();
 
 
 }
